@@ -1,3 +1,5 @@
+import { z } from "zod";
+import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { handle } from "hono/vercel";
 
@@ -11,14 +13,31 @@ app
       message: "Hello Next.js!",
     });
   })
-  .get("/hello/:test", (c) => {
-    const test = c.req.param("test");
+  .get(
+    "/hello/:test",
 
-    return c.json({
-      message: "Hello World",
-      test: test,
-    });
-  });
+    (c) => {
+      return c.json({
+        message: "Hello World",
+      });
+    }
+  )
+  .post(
+    "/",
+    zValidator(
+      "json",
+      z.object({
+        name: z.string(),
+        userId: z.number(),
+      })
+    ),
+
+    (c) => {
+      const { name, userId } = c.req.valid("json");
+
+      return c.json({});
+    }
+  );
 
 export const GET = handle(app);
 export const POST = handle(app);
