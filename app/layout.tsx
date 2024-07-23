@@ -9,6 +9,7 @@ import {
 } from "@clerk/nextjs";
 
 import "./globals.css";
+import { QueryProvider } from "@/providers/query-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,9 +27,11 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={inter.className}>
-          <SignedOut></SignedOut>
-          <SignedIn></SignedIn>
-          {children}
+          <QueryProvider>
+            <SignedOut></SignedOut>
+            <SignedIn></SignedIn>
+            {children}
+          </QueryProvider>
         </body>
       </html>
     </ClerkProvider>
