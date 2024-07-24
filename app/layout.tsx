@@ -10,6 +10,7 @@ import {
 
 import "./globals.css";
 import { QueryProvider } from "@/providers/query-provider";
+import SheetProvider from "@/providers/sheet-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,6 +31,7 @@ export default function RootLayout({
           <QueryProvider>
             <SignedOut></SignedOut>
             <SignedIn></SignedIn>
+            <SheetProvider />
             {children}
           </QueryProvider>
         </body>
