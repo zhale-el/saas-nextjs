@@ -15,6 +15,13 @@
       "when": 1721725358949,
       "tag": "0001_curly_sharon_carter",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1722156852766,
+      "tag": "0002_certain_the_enforcers",
+      "breakpoints": true
     }
   ]
 }
