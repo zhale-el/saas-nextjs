@@ -6,32 +6,32 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { z } from "zod";
-import { insertAccountSchema } from "@/db/schema";
+import { insertTransactionSchema } from "@/db/schema";
 import { Loader2 } from "lucide-react";
 
-import AccountForm from "./account-form";
-import { useOpenAccount } from "../hooks/use-open-account";
-import { useGetAccount } from "../api/use-get-transaction";
-import { useEditAccount } from "../api/use-edit-transaction";
-import { useDeleteAccount } from "../api/use-delete-transaction";
+import AccountForm from "./transaction-form";
+import { useOpenTransaction } from "../hooks/use-open-transaction";
+import { useGetTransaction } from "../api/use-get-transaction";
+import { useEditTransaction } from "../api/use-edit-transaction";
+import { useDeleteTransaction } from "../api/use-delete-transaction";
 import { useConfirm } from "@/hooks/use-confirm";
 
-const formSchema = insertAccountSchema.pick({
+const formSchema = insertTransactionSchema.pick({
   name: true,
 });
 type FormValues = z.input<typeof formSchema>;
 
 const EditAccountSheet = () => {
-  const { isOpen, onClose, id } = useOpenAccount();
+  const { isOpen, onClose, id } = useOpenTransaction();
 
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
     "You are about to delete this account."
   );
 
-  const accountQuery = useGetAccount(id);
-  const editMutation = useEditAccount(id);
-  const deleteMutation = useDeleteAccount(id);
+  const accountQuery = useGetTransaction(id);
+  const editMutation = useEditTransaction(id);
+  const deleteMutation = useDeleteTransaction(id);
 
   const isPending = editMutation.isPending || deleteMutation.isPending;
 
