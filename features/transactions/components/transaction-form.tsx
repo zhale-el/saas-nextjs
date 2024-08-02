@@ -13,14 +13,17 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Select } from "@/components/select";
+import { DatePicker } from "@/components/data-picker";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
-  date: z.coerce.date(),
+  // date: z.coerce.date(),
   accountId: z.string(),
-  categoryId: z.string().nullable().optional(),
-  payee: z.string(),
-  amount: z.string(),
-  notes: z.string().nullable(),
+  // categoryId: z.string().nullable().optional(),
+  // payee: z.string(),
+  // amount: z.string(),
+  // notes: z.string().nullable().optional(),
 });
 
 const apiSchema = insertTransactionSchema.omit({
@@ -57,19 +60,36 @@ const TransactionForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues,
   });
-  const handleSubmit = (valuse: FormValues) => {
-    onSubmit(valuse);
-    // console.log({ valuse });
+  const handleSubmit = (values: FormValues) => {
+    // onSubmit(values);
+    console.log({ valuse });
   };
   const handleDelete = () => {
     onDelete?.();
   };
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4 pt-4"
       >
+        <FormField
+          name="date"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <DatePicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={disabled}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
         <FormField
           name="accountId"
           control={form.control}
@@ -89,6 +109,62 @@ const TransactionForm = ({
             </FormItem>
           )}
         />
+
+        <FormField
+          name="categoryId"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Category</FormLabel>
+              <FormControl>
+                <Select
+                  placeholder="Select an category"
+                  options={categoryOptions}
+                  onCreate={onCreateCategory}
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={disabled}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name="payee"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Payee</FormLabel>
+              <FormControl>
+                <Input
+                  disabled={disabled}
+                  placeholder="Add a payee"
+                  {...field}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name="notes"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Notes</FormLabel>
+              <FormControl>
+                <Textarea
+                  {...field}
+                  value={field.value ?? ""}
+                  disabled={disabled}
+                  placeholder="Optional notes"
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
         <Button className="w-full" disabled={disabled}>
           {id ? "Save changes" : "Create account"}
         </Button>

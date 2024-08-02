@@ -122,7 +122,6 @@ const app = new Hono()
   .post(
     "/",
     clerkMiddleware(),
-
     zValidator(
       "json",
       insertTransactionSchema.omit({
