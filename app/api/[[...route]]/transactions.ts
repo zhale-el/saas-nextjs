@@ -41,10 +41,10 @@ const app = new Hono()
       const defaultFrom = subDays(defaultTo, 30);
 
       const startDate = from
-        ? parse(from, "yyy-MM-dd", new Date())
+        ? parse(from, "yyyyy-MM-dd", new Date())
         : defaultFrom;
 
-      const endDate = to ? parse(to, "yyy-MM-dd", new Date()) : defaultTo;
+      const endDate = to ? parse(to, "yyyyy-MM-dd", new Date()) : defaultTo;
 
       const data = await db
         .select({
@@ -56,6 +56,7 @@ const app = new Hono()
           amount: transactions.amount,
           notes: transactions.notes,
           account: accounts.name,
+          name: accounts.name,
           accountId: transactions.accountId,
         })
         .from(transactions)

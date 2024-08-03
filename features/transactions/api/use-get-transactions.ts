@@ -4,6 +4,7 @@ import { client } from "@/lib/hono";
 import { useSearchParams } from "next/navigation";
 
 export const useGetTransactions = () => {
+
   const params = useSearchParams();
   const from = params.get("from") || "";
   const to = params.get("to") || "";
@@ -26,6 +27,8 @@ export const useGetTransactions = () => {
       }
 
       const { data } = await response.json();
+    
+
       return data;
     },
   });

@@ -59,8 +59,6 @@ const NewTransactiontSheet = () => {
   const isLoading = categoryQuery.isLoading || accountQuery.isLoading;
 
   const onSubmit = (values: FormValues) => {
-    console.log("======onSubmit====");
-
     createMutation.mutate(values, {
       onSuccess: () => {
         onClose();

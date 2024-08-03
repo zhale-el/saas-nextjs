@@ -18,14 +18,15 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { DatePicker } from "@/components/data-picker";
 import { AmountInput } from "@/components/amount-input";
+import { convertAmountToMiliunits } from "@/lib/utils";
 
 const formSchema = z.object({
-  // date: z.coerce.date(),
+  date: z.coerce.date(),
   accountId: z.string(),
-  // categoryId: z.string().nullable().optional(),
-  // payee: z.string(),
-  // amount: z.string(),
-  // notes: z.string().nullable().optional(),
+  categoryId: z.string().nullable().optional(),
+  payee: z.string(),
+  amount: z.string(),
+  notes: z.string().nullable().optional(),
 });
 
 const apiSchema = insertTransactionSchema.omit({
@@ -62,9 +63,16 @@ const TransactionForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues,
   });
+
+
+
   const handleSubmit = (values: FormValues) => {
-    // onSubmit(values);
-    console.log({ valuse });
+    const amount = parseFloat(values.amount);
+    const amountInMiliunits = convertAmountToMiliunits(amount);
+    onSubmit({
+      ...values,
+      amount: amountInMiliunits,
+    });
   };
   const handleDelete = () => {
     onDelete?.();
@@ -185,7 +193,7 @@ const TransactionForm = ({
         />
 
         <Button className="w-full" disabled={disabled}>
-          {id ? "Save changes" : "Create account"}
+          {id ? "Save changes" : "Create transaction"}
         </Button>
         {!!id && (
           <Button
@@ -196,7 +204,7 @@ const TransactionForm = ({
             variant="outline"
           >
             <Trash className="size-4 mr-2" />
-            Delete account
+            Delete transaction
           </Button>
         )}
       </form>
