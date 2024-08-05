@@ -18,7 +18,10 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { DatePicker } from "@/components/data-picker";
 import { AmountInput } from "@/components/amount-input";
-import { convertAmountToMiliunits } from "@/lib/utils";
+import {
+  convertAmountFromMiliunits,
+  convertAmountToMiliunits,
+} from "@/lib/utils";
 
 const formSchema = z.object({
   date: z.coerce.date(),
@@ -64,14 +67,12 @@ const TransactionForm = ({
     defaultValues: defaultValues,
   });
 
-
-
   const handleSubmit = (values: FormValues) => {
     const amount = parseFloat(values.amount);
     const amountInMiliunits = convertAmountToMiliunits(amount);
     onSubmit({
       ...values,
-      amount: amountInMiliunits,
+      amount: convertAmountFromMiliunits(amountInMiliunits),
     });
   };
   const handleDelete = () => {

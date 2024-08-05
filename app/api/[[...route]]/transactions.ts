@@ -246,6 +246,8 @@ const app = new Hono()
       })
     ),
     async (c) => {
+      console.log("=======1==============");
+
       const auth = getAuth(c);
       const { id } = c.req.valid("param");
       const values = c.req.valid("json");
@@ -257,6 +259,8 @@ const app = new Hono()
       if (!auth?.userId) {
         return c.json({ error: "Unauthorized" }, 401);
       }
+
+      console.log("=========2============");
 
       const transactionsToUpdate = db.$with("transactions_to_update").as(
         db
@@ -277,6 +281,7 @@ const app = new Hono()
           )
         )
         .returning();
+
       if (!data) {
         return c.json(
           {
