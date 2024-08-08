@@ -5,7 +5,10 @@ import ImportTabel from "./import-table";
 import { columns } from "./columns";
 import { format, parse } from "date-fns";
 
-import { convertAmountToMiliunits } from "@/lib/utils";
+import {
+  convertAmountFromMiliunits,
+  convertAmountToMiliunits,
+} from "@/lib/utils";
 
 const dateFormat = "yyyy-MM-dd HH:mm:ss";
 const outputFormat = "yyyy-MM-dd";
@@ -96,6 +99,7 @@ const ImportCard = ({ data, onCancel, onSubmit }: Props) => {
       amount: convertAmountToMiliunits(parseFloat(item.amount)),
       date: format(parse(item.date, dateFormat, new Date()), outputFormat),
     }));
+
     onSubmit(formattedData);
   };
   return (

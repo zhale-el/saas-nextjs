@@ -72,7 +72,7 @@ const TransactionForm = ({
     const amountInMiliunits = convertAmountToMiliunits(amount);
     onSubmit({
       ...values,
-      amount: convertAmountFromMiliunits(amountInMiliunits),
+      amount: amountInMiliunits,
     });
   };
   const handleDelete = () => {

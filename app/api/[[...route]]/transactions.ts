@@ -65,9 +65,9 @@ const app = new Hono()
         .where(
           and(
             accountId ? eq(transactions.accountId, accountId) : undefined,
-            eq(accounts.userId, auth.userId),
-            gte(transactions.date, startDate),
-            lte(transactions.date, endDate)
+            eq(accounts.userId, auth.userId)
+            // gte(transactions.date, startDate),
+            // lte(transactions.date, endDate)
           )
         )
         .orderBy(desc(transactions.date));
