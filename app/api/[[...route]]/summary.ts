@@ -4,9 +4,9 @@ import { Hono } from "hono";
 import { z } from "zod";
 import { subDays, parse, differenceInDays } from "date-fns";
 import { db } from "@/db/drizzle";
-import { sql, sum, eq, and, gte, lte } from "drizzle-orm";
-import { transactions, accounts } from "@/db/schema";
-import { calculcatePercentageChange } from "@/lib/utils";
+import { sql, sum, eq, and, gte, lte, lt, desc } from "drizzle-orm";
+import { transactions, accounts, categories } from "@/db/schema";
+import { calculcatePercentageChange, fillMissingDays } from "@/lib/utils";
 
 const app = new Hono().get(
   "/",
@@ -29,7 +29,7 @@ const app = new Hono().get(
       return c.json({ error: "Unauthorized" }, 401);
     }
     const defaultTo = new Date();
-    const defaultFrom = subDays(defaultTo, 30);
+    const defaultFrom = subDays(defaultTo, 100);
 
     const startDate = from
       ? parse(from, "yyyy-MM-dd", new Date())
@@ -96,12 +96,79 @@ const app = new Hono().get(
       lastPeriod.remaining
     );
 
+    const category = await db
+      .select({
+        name: categories.name,
+        value: sql`SUM(ABS(${transactions.amount}))`.mapWith(Number),
+      })
+      .from(transactions)
+      .innerJoin(accounts, eq(transactions.accountId, accounts.id))
+      .innerJoin(categories, eq(transactions.categoryId, categories.id))
+      .where(
+        and(
+          accountId ? eq(transactions.accountId, accountId) : undefined,
+          eq(accounts.userId, auth.userId),
+          lt(transactions.amount, 0),
+          gte(transactions.date, startDate),
+          lte(transactions.date, endDate)
+        )
+      )
+      .groupBy(categories.name)
+      .orderBy(desc(sql`SUM(ABS(${transactions.amount}))`));
+
+    const topCategories = category.slice(0, 3);
+    const otherCategories = category.slice(3);
+    const otherSum = otherCategories.reduce(
+      (sum, current) => sum + current.value,
+      0
+    );
+
+    const finalCategories = topCategories;
+    if (otherCategories.length > 0) {
+      finalCategories.push({
+        name: "Other",
+        value: otherSum,
+      });
+    }
+
+    const activeDays = await db
+      .select({
+        date: transactions.date,
+        income:
+          sql`SUM(CASE WHEN ${transactions.amount} >= 0 THEN ${transactions.amount} ELSE 0 END)`.mapWith(
+            Number
+          ),
+        expenses:
+          sql`SUM(CASE WHEN ${transactions.amount} < 0 THEN ${transactions.amount} ELSE 0 END)`.mapWith(
+            Number
+          ),
+      })
+      .from(transactions)
+      .innerJoin(accounts, eq(transactions.accountId, accounts.id))
+      .where(
+        and(
+          accountId ? eq(transactions.accountId, accountId) : undefined,
+          eq(accounts.userId, auth.userId),
+          gte(transactions.date, startDate),
+          lte(transactions.date, endDate)
+        )
+      )
+      .groupBy(transactions.date)
+      .orderBy(transactions.date);
+
+    const days = fillMissingDays(activeDays, startDate, endDate);
+
     return c.json({
-      currentPeriod,
-      lastPeriod,
-      incomeChange,
-      expensesChange,
-      remainingChange,
+      data: {
+        remainingAmount: currentPeriod.remaining,
+        remainingChange,
+        incomeAmount: currentPeriod.income,
+        incomeChange,
+        expensesAmount: currentPeriod.expenses,
+        expensesChange,
+        categories: finalCategories,
+        days,
+      },
     });
   }
 );

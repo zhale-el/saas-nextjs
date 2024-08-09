@@ -38,7 +38,7 @@ const app = new Hono()
       }
 
       const defaultTo = new Date();
-      const defaultFrom = subDays(defaultTo, 30);
+      const defaultFrom = subDays(defaultTo, 100);
 
       const startDate = from
         ? parse(from, "yyyyy-MM-dd", new Date())
@@ -65,9 +65,9 @@ const app = new Hono()
         .where(
           and(
             accountId ? eq(transactions.accountId, accountId) : undefined,
-            eq(accounts.userId, auth.userId)
-            // gte(transactions.date, startDate),
-            // lte(transactions.date, endDate)
+            eq(accounts.userId, auth.userId),
+            gte(transactions.date, startDate),
+            lte(transactions.date, endDate)
           )
         )
         .orderBy(desc(transactions.date));
