@@ -6,7 +6,7 @@ import { subDays, parse, differenceInDays } from "date-fns";
 import { db } from "@/db/drizzle";
 import { sql, sum, eq, and, gte, lte, lt, desc } from "drizzle-orm";
 import { transactions, accounts, categories } from "@/db/schema";
-import { calculcatePercentageChange, fillMissingDays } from "@/lib/utils";
+import { calculatePercentageChange, fillMissingDays } from "@/lib/utils";
 
 const app = new Hono().get(
   "/",
@@ -29,7 +29,7 @@ const app = new Hono().get(
       return c.json({ error: "Unauthorized" }, 401);
     }
     const defaultTo = new Date();
-    const defaultFrom = subDays(defaultTo, 100);
+    const defaultFrom = subDays(defaultTo, 200);
 
     const startDate = from
       ? parse(from, "yyyy-MM-dd", new Date())
@@ -77,21 +77,21 @@ const app = new Hono().get(
     );
     const [lastPeriod] = await fetchFinancialData(
       auth.userId,
-      startDate,
-      endDate
+      lastPeriodStart,
+      lastPeriodEnd
     );
 
-    const incomeChange = calculcatePercentageChange(
+    const incomeChange = calculatePercentageChange(
       currentPeriod.income,
       lastPeriod.income
     );
 
-    const expensesChange = calculcatePercentageChange(
+    const expensesChange = calculatePercentageChange(
       currentPeriod.expenses,
       lastPeriod.expenses
     );
 
-    const remainingChange = calculcatePercentageChange(
+    const remainingChange = calculatePercentageChange(
       currentPeriod.remaining,
       lastPeriod.remaining
     );

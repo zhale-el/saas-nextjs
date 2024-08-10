@@ -1,15 +1,11 @@
-"use client";
+import DataGrid from "@/components/data-grid";
 
-import { useNewAccount } from "@/features/accounts/hooks/use-new-account";
-import { Button } from "@/components/ui/button";
-
-const Home = () => {
-  const { onOpen, onClose } = useNewAccount();
+const DashboardPage = () => {
   return (
-    <div>
-      <Button onClick={onOpen}>Add an account</Button>
+    <div className="max-w-screen-xl mx-auto w-full pb-10 -mt-24">
+      <DataGrid />
     </div>
   );
 };
 
-export default Home;
+export default DashboardPage;
