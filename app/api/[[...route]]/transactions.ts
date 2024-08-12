@@ -38,7 +38,7 @@ const app = new Hono()
       }
 
       const defaultTo = new Date();
-      const defaultFrom = subDays(defaultTo, 200);
+      const defaultFrom = subDays(defaultTo, 30);
 
       const startDate = from
         ? parse(from, "yyyyy-MM-dd", new Date())
