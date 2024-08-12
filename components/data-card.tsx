@@ -79,6 +79,7 @@ const DataCard = ({
             preserveValue
             start={0}
             end={value}
+            decimals={2}
             decimalPlaces={2}
             formattingFn={formatCurrency}
           />
