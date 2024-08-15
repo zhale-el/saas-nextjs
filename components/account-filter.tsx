@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 
 import { useGetAccounts } from "@/features/accounts/api/use-get-accounts";
+import { useGetSummary } from "@/features/summary/api/use-get-summary";
 
 const AccountFilter = () => {
   const router = useRouter();
@@ -21,6 +22,7 @@ const AccountFilter = () => {
   const from = params.get("from") || "";
   const to = params.get("to") || "";
 
+  const { isLoading: isLoadingSummary } = useGetSummary();
   const { data: accounts, isLoading: isLoadingAccounts } = useGetAccounts();
 
   const onChange = (newValue: string) => {
@@ -51,7 +53,7 @@ const AccountFilter = () => {
     <Select
       value={accountId}
       onValueChange={onChange}
-      disabled={isLoadingAccounts}
+      disabled={isLoadingAccounts || isLoadingSummary}
     >
       <SelectTrigger
         className="lg:w-auto w-full h-9 rounded-md px-3 font-normal 
