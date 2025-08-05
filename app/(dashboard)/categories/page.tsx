@@ -8,12 +8,12 @@ import { DataTable } from "@/components/data-table";
 import { columns } from "./columns";
 
 import { useGetCategories } from "@/features/categories/api/use-get-categories";
-import { useDeleteCategory } from "@/features/categories/api/use-delete-category";
 import { useNewCategory } from "@/features/categories/hooks/use-new-category";
+import { useBulkDeleteCategories } from "@/features/categories/api/use-bulk-delete-categories";
 
 const CategoriesPage = () => {
   const newCategory = useNewCategory();
-  const deleteCategories = useDeleteCategory();
+  const deleteCategories = useBulkDeleteCategories();
   const categoriesQuery = useGetCategories();
   const categories = categoriesQuery.data || [];
 
